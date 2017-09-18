@@ -4,20 +4,62 @@
 }
 
 .form-control {
-	padding-right: 5px;
+	margin-right: 5px;
+	margin-top: 5px;
 }
 
 .rmargin {
 	padding: 5px;
 }
 
-.header {
+header {
+	padding-top: 10px;
 	height: 60px;
+	background: #EEEEEE;
 	border-bottom: 1px solid #000080;
 }
 
+header h1 {
+	text-align: center;
+	margin-top:0px;
+	color: #000080;
+}
+
+footer {
+	display: table;
+	height: 40px;
+	color: #111111;
+}
+
+footer h4 {
+	display: table-cell;
+	vertical-align: middle;
+	font-size: 0.9em;
+	margin: 0 auto;
+	text-align: center;
+}
 .search-form {
 	padding-bottom: 20px;
 	padding-top: 20px;
 	border-bottom: 1px solid #358000;
+}
+
+.result_one {
+	min-height:100px;
+	padding: 40px;
+}
+.resultrow {
+	margin-top: 10px;
+	margin-bottom: 5px;
+	min-height: 100px;
+	border-radius: 20px;
+}
+
+.odd {
+	background-color: #efeff5;
+	color: #10108f;
+}
+
+.even {
+	background-color: #eff5ef;
 }
