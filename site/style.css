@@ -1,0 +1,23 @@
+.container {
+	margin: 20px;
+	padding: 20px;
+}
+
+.form-control {
+	padding-right: 5px;
+}
+
+.rmargin {
+	padding: 5px;
+}
+
+.header {
+	height: 60px;
+	border-bottom: 1px solid #000080;
+}
+
+.search-form {
+	padding-bottom: 20px;
+	padding-top: 20px;
+	border-bottom: 1px solid #358000;
+}
