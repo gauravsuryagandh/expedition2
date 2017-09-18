@@ -14,9 +14,6 @@ import json
 
 class Expedition2ToursSpider(scrapy.Spider):
 
-    def __init__(self):
-        self.db = MongoClient().test
-
     def _parse_cities(self, response, selector):
         """
         parses a given selector for cities and returns a dictionary of cities
@@ -69,6 +66,18 @@ class Expedition2ToursSpider(scrapy.Spider):
 
         overview_text = re.sub(r'[^0-9a-zA-Z\-."\'\s\r]', '', overview_text)
         return overview_text
+
+    def _parse_tour_images(self, response):
+
+        images = response.css('div.ws_images > ul > li')
+        image_urls  = []
+        for image in images:
+            image_urls.append(image.css('img::attr(src)').extract_first())
+            image_urls = [re.sub(r'^\.\.', r'https://expedition2india.com', u) \
+                                for u in image_urls]
+
+        return image_urls
+
 
 class IndependentToursSpider(Expedition2ToursSpider):
     name = 'independent_tours'
@@ -163,7 +172,10 @@ class IndependentToursSpider(Expedition2ToursSpider):
 
         tour_dict['thumbnail_url'] = response.request.meta['tour_thumbnail_url']
 
-        entry = self.db.tours.insert_one(tour_dict)
+        tour_dict['image_urls'] = self._parse_tour_images(response)
+
+        yield tour_dict
+        #entry = self.db.tours.insert_one(tour_dict)
 
 class GroupTourSpider(Expedition2ToursSpider):
 
@@ -264,5 +276,6 @@ class GroupTourSpider(Expedition2ToursSpider):
 
         tour_dict['thumbnail_url'] = response.request.meta['tour_thumbnail_url']
 
-        entry = self.db.tours.insert_one(tour_dict)
+        tour_dict['image_urls'] = self._parse_tour_images(response)
 
+        yield tour_dict
