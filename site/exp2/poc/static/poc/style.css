@@ -3,7 +3,7 @@
 	padding: 20px;
 }
 
-.form-control {
+.form-control .input-group-addon {
 	margin-right: 5px;
 	margin-top: 5px;
 }
@@ -32,8 +32,6 @@ footer {
 }
 
 footer h4 {
-	display: table-cell;
-	vertical-align: middle;
 	font-size: 0.9em;
 	margin: 0 auto;
 	text-align: center;

@@ -3,3 +3,5 @@
 venv
 dl*
 crawls
+static
+*sqlite*
