@@ -16,13 +16,13 @@ header {
 	padding-top: 10px;
 	height: 60px;
 	background: #EEEEEE;
-	border-bottom: 1px solid #000080;
+	border-bottom: 1px solid #0000e8;
 }
 
 header h1 {
 	text-align: center;
 	margin-top:0px;
-	color: #000080;
+	color: #0000e8;
 }
 
 footer {
@@ -54,15 +54,13 @@ footer h4 {
 }
 
 .odd {
-	background-color: #efeffe;
-	color: #444444;
   margin-top:20px;
+  border: 1px solid grey;
 }
 
 .even {
-	background-color: #effeef;
-	color: #444444;
   margin-top:20px;
+  border: 1px solid grey;
 }
 
 .spacer {
@@ -88,4 +86,6 @@ footer h4 {
 
 h1.tourtitle {
   font-size: 1.8em;
+  color: #337ab7;
 }
+
