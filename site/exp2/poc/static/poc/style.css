@@ -54,10 +54,38 @@ footer h4 {
 }
 
 .odd {
-	background-color: #efeff5;
-	color: #10108f;
+	background-color: #efeffe;
+	color: #444444;
+  margin-top:20px;
 }
 
 .even {
-	background-color: #eff5ef;
+	background-color: #effeef;
+	color: #444444;
+  margin-top:20px;
+}
+
+.spacer {
+    margin: 10px;
+    padding: 4px;
+}
+
+.left {
+    float : left;
+}
+
+.right {
+  float: right;
+}
+
+.tn-inline {
+  width: 160px;
+  height: 80px;
+  margin: 10px;
+	border-radius: 10px;
+  border: 1px solid black;
+}
+
+h1.tourtitle {
+  font-size: 1.8em;
 }

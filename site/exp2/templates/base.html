@@ -1,0 +1,73 @@
+{% load static %}
+<!DOCTYPE html>
+<html language=en>
+<head>
+	<title>{% block title %}Expedition 2{% endblock title %}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="{% static "poc/style.css" %}"/>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/css/bootstrap-datepicker3.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/js/bootstrap-datepicker.min.js"></script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/9.8.1/css/bootstrap-slider.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/9.8.1/bootstrap-slider.min.js"></script>
+	<script>
+		$(document).ready(function() {
+
+			$(".container .input-group.date").datepicker({
+					format: 'M-yy',
+					startDate: 'today',
+					minViewMode: 1,
+					maxViewMode: 2,
+					multidate: true,
+					multiDateSeparater: ',',
+					clearBtn: true,
+					autoClose:true,
+					defaultViewDate: {year: '2017', month: '09', day: '18'},
+			}); // datepicker
+
+			$(".container #pricerange").slider({
+				formatter: function(value) {
+						return 'Budget: USD ' + value;
+
+				}
+
+			}); //slider
+
+		}); // $(document).ready;
+  </script>
+
+</head>
+<body>
+<header>
+	<h1> {% block header %} Expedition2 {% endblock header %}</h1>
+</header>
+<div class="container">
+<div class="main">
+	<div class="search-form">
+	<form class="form-inline" action="/search">
+		<div class="form-group">
+			<input type="text" class="form-control input-lg" id="searchq" placeholder="Search for your destinations here" name="searchq" size="40">
+			<div class="input-group date">
+      	<input type="text" class="form-control input-lg" id="searchdate" placeholder="Select dates" name="dates"><span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
+			</div>
+			<div class="input-group rmargin">
+				<label for="pricerange">Budget: </label>
+				<input type="text" class="form-control input-lg" id="pricerange" data-slider-id='budgetslider' data-slider-min="100" data-slider-max="3000" data-slider-step="100" data-slider-value="[200, 1000]" name="budget"/>
+			</div>
+			<button type="submit" class="btn-lg btn-primary">Search</button>
+
+    </div>
+	</form>
+	</div> <!--search-form-->
+	{% block main %}{% endblock main %}
+
+</div> <!--main-->
+</div> <!--container-->
+</body>
+<footer>
+	<h4>{% block footer %} developed by hyphenOs {% endblock footer %}</h4>
+</footer>
+</body>
+</html>

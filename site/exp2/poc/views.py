@@ -14,6 +14,8 @@ from datetime import datetime as dt
 from pymongo import MongoClient
 _mongo_client = MongoClient()
 _db = 'test'
+CITIES = 'cities'
+TOURS = 'tours'
 
 months = ['jan', 'feb', 'mar', 'apr', 'may', 'jun',
             'jul', 'aug', 'sep', 'oct', 'nov', 'dec']
@@ -71,13 +73,23 @@ def _filter_by_dates(tours, dates):
     return output_tours
 
 def index(request):
+
+    cities_collection = _mongo_client[_db][CITIES]
+    tours_collection = _mongo_client[_db][TOURS]
+
+    cities = cities_collection.find({}, {'city_name':1})
+
+    out_cities = []
+    for city in cities:
+        name = city['city_name']
+        tours_count = tours_collection.find({'cities': name}).count()
+        out_cities.append({'name': name, 'count' : tours_count})
+    out_cities = sorted(out_cities, key=lambda x: x['count'], reverse=True)
     t = get_template('index.html')
-    return HttpResponse(t.render())
+    return HttpResponse(t.render(context={'cities': out_cities}))
 
 
 def search(request):
-
-    _collection = 'tours'
 
     dates = request.GET.get('dates')
     budget = request.GET.get('budget')
@@ -121,8 +133,6 @@ def search(request):
 
     tours_collection = _mongo_client[_db]['tours']
 
-    print query
-    print projection
     tours = tours_collection.find(query, projection)\
                 .sort([('score', {"$meta" : "textScore"})])
 
@@ -131,7 +141,8 @@ def search(request):
     if use_dates:
         tours = _filter_by_dates(tours, dates)
 
-    response_text = "\n\n".join([str(tour) for tour in tours])
-    print response_text
+    #response_text = "\n\n".join([str(tour) for tour in tours])
 
-    return HttpResponse(response_text)
+    t = get_template('search.html')
+
+    return HttpResponse(t.render(context={'tours':tours}))

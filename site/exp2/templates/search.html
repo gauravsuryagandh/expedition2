@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %} Search Results {% endblock title %}
+{% block main %}
+  {% for tour in tours %}
+  <div class="resultrow {% cycle "odd" "even" %}">
+    <img class="right tn-inline" src="" alt="image">
+    <h1 id="title" class="spacer tourtitle"> {{ tour.title|capfirst }} ({{tour.type}}) </h1>
+    {% if tour.type == "group" %}
+    <h4 id="tourdates" class="spacer"> Tour Dates:
+      {% for next_date in tour.next_dates %}
+        &nbsp;{{next_date.0}}-{{next_date.1}}&nbsp;
+      {% endfor tour.next_dates%}
+    </h4>
+    {% endif %}
+    <h4 id="tourprices" class="spacer">Pricing:
+      {% if tour.type == "group" %}
+        {% for k, v in tour.pricing.iteritems %}
+          <b>{{k}}</b>:{{v}}&nbsp;&nbsp;
+        {% endfor tour.pricing.iteritems %}
+      {% else %}
+        {% for k, v in tour.pricing.iteritems %}
+          <b>{{k}}</b>:&nbsp;(
+          {% for k1, v1 in v.iteritems %}
+          <b>{{k1}}</b>: {{v1}}
+          {% endfor v.iteritems %}
+          )&nbsp; |
+        {% endfor tour.pricing.iteritems %}
+
+      {% endif %}
+    </h4>
+    <div id="overview" class="spacer"> {{ tour.overview }} </div>
+	</div>
+  {% endfor tours %}
+{% endblock main %}
