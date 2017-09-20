@@ -15,7 +15,8 @@ from pymongo import MongoClient
 _mongo_client = MongoClient()
 _db = 'test'
 
-months = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec']
+months = ['jan', 'feb', 'mar', 'apr', 'may', 'jun',
+            'jul', 'aug', 'sep', 'oct', 'nov', 'dec']
 valid_years = [ 17, 2017, 18, 2018, 19, 2019]
 _date_str = '%m/%d/%Y'
 
@@ -25,11 +26,27 @@ def _filter_by_price(tours, budget_min, budget_max):
     output_tours = []
     for tour in tours:
         tour_prices = tour['pricing']
-        print tour_prices
         for price in tour_prices:
-            value = re.sub('[^0-9]', '', tour_prices[price])
-            value = int(value)
-            if value >= budget_min and value <= budget_max:
+            values = []
+            if isinstance(tour_prices[price], dict):
+                for p in tour_prices[price]:
+                    value = tour_prices[price][p]
+                    values.append(value)
+            else:
+                value = tour_prices[price]
+                values = [value]
+            value_found = False
+            for v in values:
+                try:
+                    v = re.sub(r'[^0-9]', '', v)
+                    value = int(v)
+                except ValueError:
+                    value = 0
+                if value >= budget_min and value <= budget_max:
+                    print value
+                    value_found = True
+                    break
+            if value_found:
                 output_tours.append(tour)
                 break
 
@@ -74,7 +91,11 @@ def search(request):
 
     projection = {
                     'score': {'$meta': "textScore"},
-                    'title': 1
+                    'title': 1,
+                    'type': 1,
+                    'next_dates': 1,
+                    'pricing': 1,
+                    'overview': 1
                 }
 
     # FIXME : separate to a different function
@@ -94,15 +115,9 @@ def search(request):
                 break
     if use_dates:
         query['next_dates'] = {'$exists': True}
-        projection['next_dates'] = 1
 
     # Budget:
     budget_min, budget_max = [int(x) for x in budget.split(",")]
-    query['$or'] = [
-                    {'pricing': {'$exists':True}},
-                    {'prices' : {'$exists':True}}
-                ]
-    projection['pricing'] = 1
 
     tours_collection = _mongo_client[_db]['tours']
 

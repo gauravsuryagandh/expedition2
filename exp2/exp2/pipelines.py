@@ -22,8 +22,12 @@ class Exp2MongoPipeline(object):
 
     def process_item(self, item, spider):
 
-        collection = self.db[self.mongo_collection]
+        if item.has_key('itinerary'):
+            collection = 'tours'
+        elif item.has_key('city_name'):
+            collection = 'cities'
 
+        collection = self.db[collection]
         collection.insert_one(dict(item))
         return item
 

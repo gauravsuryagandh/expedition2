@@ -22,12 +22,12 @@ class Expedition2ToursSpider(scrapy.Spider):
         selectors = response.css(selector)
         tour_city_names = map(lambda x: x.css('center::text').extract_first().\
                                     strip().lower(), selectors)
-        tour_city_tnails = map(lambda x: x.css('img::attr(src)').\
+        tour_city_urls = map(lambda x: x.css('a::attr(href)').\
                                     extract_first().strip(), selectors)
 
-        tour_cities_dict = dict(zip(tour_city_names, tour_city_tnails))
+        #tour_cities_dict = dict(zip(tour_city_names, tour_city_tnails))
 
-        return tour_cities_dict
+        return tour_city_names, tour_city_urls
 
 
     def _parse_duration_title(self, response):
@@ -78,6 +78,25 @@ class Expedition2ToursSpider(scrapy.Spider):
 
         return image_urls
 
+    def parse_city(self, response):
+
+        city_dict = {}
+        # Get the overview
+        overview = response.css('td.normal_content').pop()
+        # remove non-ascii
+        overview_text = re.sub(r'[^\x00-\x7f]+', ' ',
+                                ''.join(overview.root.itertext()).strip())
+        overview_text = re.sub(r'[ ]+', ' ', overview_text)
+
+        city_dict['overview'] = overview_text
+        city_dict['city_name'] = response.request.meta['city_name']
+
+        # get the image
+        style = response.css('#indinnerbanner::attr(style)').extract_first()
+        url = re.search(r'background:url\((.*)\).*', style).group(1)
+        city_dict['image_urls'] = [url]
+
+        yield city_dict
 
 class IndependentToursSpider(Expedition2ToursSpider):
     name = 'independent_tours'
@@ -90,8 +109,8 @@ class IndependentToursSpider(Expedition2ToursSpider):
                                 '.mytrunk')
 
         for price in price_selectors:
-            price_class = price.css('h4::text').extract_first().lower().\
-                                    replace(' ', '_')
+            price_class = price.css('h4::text').extract_first().lower()\
+                                    .strip().replace(' ', '_')
             price_list = price.css('p::text').extract()
             double_o = price_list[1]
             single_o = price_list[3]
@@ -147,6 +166,7 @@ class IndependentToursSpider(Expedition2ToursSpider):
 
         tour_dict = {}
 
+        tour_dict['type'] = 'independent'
         #duration and title
         duration, title = self._parse_duration_title(response)
         tour_dict['duration']  = duration
@@ -159,12 +179,17 @@ class IndependentToursSpider(Expedition2ToursSpider):
 
         # cities
         selector = 'ul#carousel > li'
-        tour_cities_dict = self._parse_cities(response, selector)
-        tour_dict['cities'] = tour_cities_dict
+        tour_cities, tour_city_urls = self._parse_cities(response, selector)
+        tour_dict['cities'] = tour_cities
+
+        for city_name, city_url in zip(tour_cities, tour_city_urls):
+            request = scrapy.Request(city_url, callback=self.parse_city)
+            request.meta['city_name'] = city_name
+            yield request
 
         # pricing
         tour_prices = self._parse_pricing(response)
-        tour_dict['prices'] = tour_prices
+        tour_dict['pricing'] = tour_prices
 
         # itinerary
         itinerary_dict = self._parse_itinerary(response)
@@ -246,6 +271,7 @@ class GroupTourSpider(Expedition2ToursSpider):
     def parse_tour(self, response):
 
         tour_dict = {}
+        tour_dict['type'] = 'group'
 
         # duration and title
         duration, title = self._parse_duration_title(response)
@@ -259,8 +285,13 @@ class GroupTourSpider(Expedition2ToursSpider):
 
         # cities
         selector = ('ul#carousel > li')
-        tour_cities_dict = self._parse_cities(response, selector)
-        tour_dict['cities'] = tour_cities_dict
+        tour_cities, tour_city_urls = self._parse_cities(response, selector)
+        tour_dict['cities'] = tour_cities
+
+        for city_name, city_url in zip(tour_cities, tour_city_urls):
+            request = scrapy.Request(city_url, callback=self.parse_city)
+            request.meta['city_name'] = city_name
+            yield request
 
         # parse prices
         tour_prices = self._parse_pricing(response)
@@ -279,3 +310,4 @@ class GroupTourSpider(Expedition2ToursSpider):
         tour_dict['image_urls'] = self._parse_tour_images(response)
 
         yield tour_dict
+
