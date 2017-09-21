@@ -76,12 +76,19 @@ footer h4 {
   float: right;
 }
 
-.tn-inline {
+.tnail-img {
   width: 160px;
   height: 80px;
   margin: 10px;
-	border-radius: 10px;
+}
+
+.tnail-img > img {
+	max-width: 98%;
+	max-height: 98%;
+	margin:2%;
+	padding:auto;
   border: 1px solid black;
+	border-radius: 10px;
 }
 
 h1.tourtitle {

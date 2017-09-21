@@ -25,7 +25,7 @@ SECRET_KEY = 'a(qz3gs@+s_v%^$z3(-df*canl^ckmsht73q@9gd9jl9b$x=$5'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [ 'e2.hyphenos.io', '127.0.0.1', 'localhost' ]
 
 
 # Application definition
@@ -125,5 +125,7 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 STATICFILES_DIRS = [
-        os.path.join(BASE_DIR, 'sitewide-static')
+        os.path.join(BASE_DIR, 'sitewide-static'),
+        os.path.realpath(os.path.join(BASE_DIR, '../../exp2/dload/images/'))
     ]
+print STATICFILES_DIRS

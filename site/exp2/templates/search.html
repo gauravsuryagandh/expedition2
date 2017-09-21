@@ -1,9 +1,31 @@
 {% extends "base.html" %}
+{% load static %}
 {% block title %} Search Results {% endblock title %}
+
+{% block searchform %}
+	<div class="search-form">
+	<form class="form-inline" action="/search">
+		<div class="form-group">
+			<input type="text" class="form-control input-lg" id="searchq" value="{{req.q}}" name="searchq" size="40">
+			<div class="input-group date">
+				<input type="text" class="form-control input-lg" id="searchdate" placeholder="Select dates" name="dates" value="{{req.dates}}"><span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
+			</div>
+			<div class="input-group rmargin">
+				<label for="pricerange">Budget: </label>
+				<input type="text" class="form-control input-lg" id="pricerange" data-slider-id='budgetslider' data-slider-min="100" data-slider-max="8000" data-slider-step="100" data-slider-value="[{{req.budget}}]" name="budget"/>
+			</div>
+			<button type="submit" class="btn-lg btn-primary">Search</button>
+
+    </div>
+	</form>
+{% endblock searchform %}
+
 {% block main %}
   {% for tour in tours %}
   <div class="resultrow {% cycle "odd" "even" %}">
-    <img class="right tn-inline" src="" alt="image">
+		<div class="right tnail-img">
+			<img src="{% static "" %}{{tour.images.0.path}}" alt="image">
+		</div>
 		<h1 id="title" class="spacer tourtitle"> {{ tour.title|capfirst }} <span class="label label-primary">{{tour.type}}</span> </h1>
     {% if tour.type == "group" %}
     <h4 id="tourdates" class="spacer"> Tour Dates:

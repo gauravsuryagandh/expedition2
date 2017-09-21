@@ -46,6 +46,7 @@
 <div class="container">
 <div class="main">
 	<div class="search-form">
+	{% block searchform %}
 	<form class="form-inline" action="/search">
 		<div class="form-group">
 			<input type="text" class="form-control input-lg" id="searchq" placeholder="Search for your destinations here" name="searchq" size="40">
@@ -54,12 +55,13 @@
 			</div>
 			<div class="input-group rmargin">
 				<label for="pricerange">Budget: </label>
-				<input type="text" class="form-control input-lg" id="pricerange" data-slider-id='budgetslider' data-slider-min="100" data-slider-max="3000" data-slider-step="100" data-slider-value="[200, 1000]" name="budget"/>
+				<input type="text" class="form-control input-lg" id="pricerange" data-slider-id='budgetslider' data-slider-min="100" data-slider-max="8000" data-slider-step="100" data-slider-value="[100,7000]" name="budget"/>
 			</div>
 			<button type="submit" class="btn-lg btn-primary">Search</button>
 
     </div>
 	</form>
+	{% endblock searchform %}
 	</div> <!--search-form-->
 	{% block main %}{% endblock main %}
 

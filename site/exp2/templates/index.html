@@ -1,12 +1,23 @@
 {% extends "base.html" %}
 {% block title %}Expedition 2 Tours {% endblock title %}
+{% block searchform %}
+{% endblock searchform %}
 {% block main %}
-{% for city in cities %}
+<h2> Select Cities that you plan to visit</h2>
+	<form action="/foo">
+	  <button type="submit" class="btn-lg btn-primary">Find Tours</button>
+<div class="btn-group" data-toggle="buttons">
 
-<div class="spacer left">
-<button class="btn-lg btn-default">{{city.name|capfirst}}   <span class="badge">{{city.count}}</span>
+  {% for city in cities %}
+  <div class="spacer left">
+	  <label class="btn btn-default" for="chkbox-{{city.name}}">{{city.name|capfirst}} <span class="badge">{{city.count}}</span>
+	  </label>
+    <input type="checkbox" id="chkbox-{{city.name}}" name="cities[]" value="{{city.name}}"/>
+		  <!--button class="btn-lg btn-default">{{city.name|capfirst}}   <span class="badge">{{city.count}}</span-->
+  </div>
+  {% endfor %}
+
+  </form>
 </div>
-
-{% endfor %}
 
 {% endblock main %}

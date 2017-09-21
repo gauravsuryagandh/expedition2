@@ -22,6 +22,11 @@ months = ['jan', 'feb', 'mar', 'apr', 'may', 'jun',
 valid_years = [ 17, 2017, 18, 2018, 19, 2019]
 _date_str = '%m/%d/%Y'
 
+_tours_search_q_projection = {
+                    'score': {'$meta': "textScore"},
+                    'title': 1, 'type': 1, 'next_dates': 1,
+                    'pricing': 1, 'overview': 1, 'images':1}
+
 # Create your views here.
 
 def _filter_by_price(tours, budget_min, budget_max):
@@ -91,29 +96,21 @@ def index(request):
 
 def search(request):
 
-    dates = request.GET.get('dates')
-    budget = request.GET.get('budget')
-    q = request.GET.get('searchq')
+    input_dates = request.GET.get('dates')
+    input_budget = request.GET.get('budget')
+    input_q = request.GET.get('searchq')
 
+    print request
     # first get all tours that match search query.
     query = {}
-    if q :
-        q = re.sub(r'[^a-zA-Z0-9\s]', '', q)
+    if input_q :
+        q = re.sub(r'[^a-zA-Z0-9\s]', '', input_q)
         query['$text'] = {'$search' : q}
-
-    projection = {
-                    'score': {'$meta': "textScore"},
-                    'title': 1,
-                    'type': 1,
-                    'next_dates': 1,
-                    'pricing': 1,
-                    'overview': 1
-                }
 
     # FIXME : separate to a different function
     use_dates = False
-    if dates: # non-empty dates
-        dates = dates.split(',')
+    if input_dates: # non-empty dates
+        dates = input_dates.split(',')
         for date in dates:
             try:
                 month, year = date.split('-')
@@ -129,11 +126,10 @@ def search(request):
         query['next_dates'] = {'$exists': True}
 
     # Budget:
-    budget_min, budget_max = [int(x) for x in budget.split(",")]
+    budget_min, budget_max = [int(x) for x in input_budget.split(",")]
 
-    tours_collection = _mongo_client[_db]['tours']
-
-    tours = tours_collection.find(query, projection)\
+    tours_collection = _mongo_client[_db][TOURS]
+    tours = tours_collection.find(query, _tours_search_q_projection)\
                 .sort([('score', {"$meta" : "textScore"})])
 
     tours = _filter_by_price(tours, budget_min, budget_max)
@@ -144,5 +140,27 @@ def search(request):
     #response_text = "\n\n".join([str(tour) for tour in tours])
 
     t = get_template('search.html')
+    req_data = {'q':input_q, 'dates':input_dates, 'budget':input_budget}
 
-    return HttpResponse(t.render(context={'tours':tours}))
+    return HttpResponse(t.render(context={'tours':tours, 'req': req_data}))
+
+def search2(request):
+
+    cities = request.GET.getlist('cities[]')
+    query_text = " ".join(cities)
+
+    query = {}
+    query_text = re.sub(r'[^a-zA-Z0-9\s]', '', query_text)
+    query['$text'] = {'$search' : query_text}
+
+    tours_collection = _mongo_client[_db][TOURS]
+    tours = tours_collection.find(query, _tours_search_q_projection)\
+                .sort([('score', {"$meta" : "textScore"})])
+
+
+    t = get_template('search.html')
+
+    # FIXME: budget hard-coded
+    req_data = {'q':query_text, 'dates':'', 'budget':'0,8000'}
+
+    return HttpResponse(t.render(context={'tours':tours, 'req': req_data}))

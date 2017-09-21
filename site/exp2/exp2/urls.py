@@ -20,5 +20,6 @@ from poc import views
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^$', views.index),
+    url(r'^foo', views.search2),
     url(r'^search', views.search)
 ]
