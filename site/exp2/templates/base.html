@@ -45,8 +45,8 @@
 </header>
 <div class="container">
 <div class="main">
-	<div class="search-form">
 	{% block searchform %}
+	<div class="search-form">
 	<form class="form-inline" action="/search">
 		<div class="form-group">
 			<input type="text" class="form-control input-lg" id="searchq" placeholder="Search for your destinations here" name="searchq" size="40">
@@ -61,8 +61,8 @@
 
     </div>
 	</form>
-	{% endblock searchform %}
 	</div> <!--search-form-->
+	{% endblock searchform %}
 	{% block main %}{% endblock main %}
 
 </div> <!--main-->

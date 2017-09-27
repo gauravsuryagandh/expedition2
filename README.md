@@ -14,6 +14,3 @@ Perform following steps to populate the DB (Tested with Python 2.7)
 
 3. Go to `exp2` directory and simply can try using `../venv/bin/scrapy crawl independent_tours` and `../venv/bin/scrapy crawl group_tours`.
 
-
-
-

@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
+{% load exp2_tags %}
 {% block title %} Search Results {% endblock title %}
 
 {% block searchform %}
@@ -23,10 +24,11 @@
 {% block main %}
   {% for tour in tours %}
   <div class="resultrow {% cycle "odd" "even" %}">
+    <a href="/tours/{{tour|mongo_id}}">
 		<div class="right tnail-img">
 			<img src="{% static "" %}{{tour.images.0.path}}" alt="image">
 		</div>
-		<h1 id="title" class="spacer tourtitle"> {{ tour.title|capfirst }} <span class="badge badge-danger">{{tour.type}}</span> </h1>
+		<h1 id="title" class="spacer tourtitle">{{ tour.title|capfirst }}<span class="badge badge-danger">{{tour.type}}</span> </h1>
     {% if tour.type == "group" %}
     <h4 id="tourdates" class="spacer"> Tour Dates:
       {% for next_date in tour.next_dates %}
@@ -50,7 +52,8 @@
 
       {% endif %}
     </h4>
-    <div id="overview" class="spacer"> {{ tour.overview }} </div>
+    <div id="overview" class="spacer">{{ tour.overview }}</div>
+    </a>
 	</div>
   {% endfor tours %}
 {% endblock main %}

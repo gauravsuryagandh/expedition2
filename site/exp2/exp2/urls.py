@@ -21,5 +21,7 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^$', views.index),
     url(r'^foo', views.search2),
-    url(r'^search', views.search)
+    url(r'^search', views.search),
+    url(r'^tours/(?P<tourid>[0-9a-f]+)', views.tour_detail),
+    url(r'^cities/(?P<cityid>[0-9a-f]+)', views.city_detail)
 ]

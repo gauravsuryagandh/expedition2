@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% load static %}
+{% load exp2_tags %}
+
+{% block title %} {{tour.title}} {% endblock title %}
+{% block searchform %}{% endblock searchform %}
+
+{% block main %}
+<h1 id="title" class="spacer tourtitle"> {{tour.title}} </h1>
+
+<nav class="navbar navbar-primary">
+  <div class="container-fluid">
+    <ul class="nav navbar-nav">
+			{% for city in tour.cities %}
+      <li><a href="#">{{city}}</a></li>
+			{% endfor %}
+    </ul>
+  </div>
+</nav>
+
+<div id="images-carousel" class="carousel slide spacer" data-ride="carousel">
+  <!-- Indicators -->
+  <ol class="carousel-indicators">
+    <li data-target="#images-carousel" data-slide-to="0" class="active"></li>
+    <li data-target="#images-carousel" data-slide-to="1"></li>
+    <li data-target="#images-carousel" data-slide-to="2"></li>
+  </ol>
+
+  <!-- Wrapper for slides -->
+  <div class="carousel-inner">
+
+		{% for image in tour.images %}
+
+		{% if forloop.first %}
+    <div class="item active">
+		{% else %}
+    <div class="item">
+		{% endif %}
+			<img src="{% static "" %}{{image.path}}" alt="Image {{forloop.counter}}">
+    </div>
+
+		{% endfor images %}
+  </div>
+  <!-- Left and right controls -->
+  <a class="left carousel-control" href="#images-carousel" data-slide="prev">
+    <span class="glyphicon glyphicon-chevron-left"></span>
+    <span class="sr-only">Previous</span>
+  </a>
+  <a class="right carousel-control" href="#images-carousel" data-slide="next">
+    <span class="glyphicon glyphicon-chevron-right"></span>
+    <span class="sr-only">Next</span>
+  </a>
+</div>
+
+		<div id="overview" class="spacer">
+		<h2 class="spacer">Overview</h2>
+		<p class="spacer justified"> {{tour.overview }} </p>
+		</div>
+
+		<div id="itinerary" class="spacer">
+		<h2 class="spacer">Itinerary</h2>
+		{% for day, dayvalue in tour.itinerary|sort_itinerary %}
+
+		<h3 class="spacer">Day {{ forloop.counter }}</h3>
+		<a class="spacer" href="{{dayvalue.hotel.url}}"> {{dayvalue.hotel.name}} </a>
+		<p class="spacer justified"> {{dayvalue.activity}} </p>
+
+		{% endfor %}
+		</div>
+
+{% endblock main %}

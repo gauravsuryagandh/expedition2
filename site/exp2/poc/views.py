@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseNotFound
 
 from django.template.loader import get_template
 
@@ -12,6 +12,8 @@ import re
 from datetime import datetime as dt
 
 from pymongo import MongoClient
+from bson.objectid import ObjectId
+
 _mongo_client = MongoClient()
 _db = 'test'
 CITIES = 'cities'
@@ -50,7 +52,6 @@ def _filter_by_price(tours, budget_min, budget_max):
                 except ValueError:
                     value = 0
                 if value >= budget_min and value <= budget_max:
-                    print value
                     value_found = True
                     break
             if value_found:
@@ -100,7 +101,6 @@ def search(request):
     input_budget = request.GET.get('budget')
     input_q = request.GET.get('searchq')
 
-    print request
     # first get all tours that match search query.
     query = {}
     if input_q :
@@ -164,3 +164,21 @@ def search2(request):
     req_data = {'q':query_text, 'dates':'', 'budget':'0,8000'}
 
     return HttpResponse(t.render(context={'tours':tours, 'req': req_data}))
+
+
+def city_detail(request):
+    pass
+
+def tour_detail(request, tourid):
+
+    tours_collection = _mongo_client[_db][TOURS]
+
+    tour = tours_collection.find_one({"_id": ObjectId(tourid)})
+
+    if not tour:
+        t = get_template('tour_not_found.html')
+        return HttpResponseNotFound(t.render(context={'tourid': tourid}))
+
+    else:
+        t = get_template('tour.html')
+        return HttpResponse(t.render(context={'tour':tour}))
